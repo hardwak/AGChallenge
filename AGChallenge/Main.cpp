@@ -60,7 +60,6 @@ void main(int iArgCount, char **ppcArgValues)
 	random_device c_mask_seed_generator;
 	int i_mask_seed = (int)c_mask_seed_generator();
 
-
 	cout << "start\n";
 #pragma omp parallel for
 	for (int i = 0; i < 10; i++)
