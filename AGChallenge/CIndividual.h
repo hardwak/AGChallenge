@@ -18,7 +18,11 @@ public:
 		fitness = cEvaluator.dEvaluate(&solution);
 	}
 
-	std::vector<int>* getSolution();
+	CIndividual(CLFLnetEvaluator& cEvaluator, std::vector<int> &solution) : cEvaluator(cEvaluator) , solution(solution){
+		fitness = cEvaluator.dEvaluate(&solution);
+	}
+
+	const std::vector<int>* getSolution();
 
 	double getFitness();
 

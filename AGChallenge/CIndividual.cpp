@@ -2,7 +2,7 @@
 #include "CGeneticAlgorithm.h"
 #include <cstdlib> 
 
-std::vector<int>* CIndividual::getSolution()
+const std::vector<int>* CIndividual::getSolution()
 {
 	return &solution;
 }
