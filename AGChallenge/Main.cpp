@@ -6,6 +6,7 @@
 #include <exception>
 #include <iostream>
 #include <random>
+#include <iomanip>
 
 using namespace TimeCounters;
 
@@ -13,9 +14,9 @@ using namespace std;
 
 #define dMAX_TIME 20 * 60
 
-int popSize = 200;
-double crossProb = 0.5;
-double mutProb = 0.3;
+int popSize = 20;
+double crossProb = 0.8;
+double mutProb = 0.5;
 
 
 void vRunExperiment(CLFLnetEvaluator &cConfiguredEvaluator)
@@ -32,13 +33,15 @@ void vRunExperiment(CLFLnetEvaluator &cConfiguredEvaluator)
 
 		c_time_counter.bGetTimePassed(&d_time_passed);
 
-		//while (d_time_passed <= dMAX_TIME)
-		//{
+//		std::cout << std::fixed << std::setprecision(18);
+
+		while (d_time_passed <= dMAX_TIME)
+		{
 			c_genetic_algorithm.vRunIteration();
 			c_genetic_algorithm.getBestSolution();
 
 			c_time_counter.bGetTimePassed(&d_time_passed);
-		//}//while (d_time_passed <= MAX_TIME)
+		}//while (d_time_passed <= MAX_TIME)
 	}//try
 	catch (exception &c_exception)
 	{
@@ -67,10 +70,11 @@ void main(int iArgCount, char **ppcArgValues)
 #pragma omp parallel for
 	for (int i = 0; i < 10; i++)
 		Sleep(1000);
-	cout << "end\n";
+	
 
 	CString  s_test;
-	vRunLFLExperiment("104b00");
+	vRunLFLExperiment("144b01");
+	cout << "end\n";
 
 	/*vRunIsingSpinGlassExperiment(81, 0, i_mask_seed);
 	vRunIsingSpinGlassExperiment(81, 0, iSEED_NO_MASK);

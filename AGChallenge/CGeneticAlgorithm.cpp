@@ -2,16 +2,25 @@
 
 CIndividual* CGeneticAlgorithm::getBestSolution()
 {
-	double bestFitness = DBL_MIN;
-	CIndividual* best = nullptr;
+
+	double bestFitness = best->getFitness();
+	CIndividual* newBest;
+	bool newBestFound = false;
 	for (size_t i = 0; i < popSize; i++)
 	{
-		double currFitness = population.at(i)->evaluateFitness();
+		double currFitness = population.at(i)->getFitness();
 		if (bestFitness < currFitness)
 		{
+			newBestFound = true;
 			bestFitness = currFitness;
-			best = population.at(i);
+			newBest = population.at(i);
 		}
+	}
+
+	if (newBestFound)
+	{
+		delete best;
+		best = newBest;
 	}
 	std::cout << best->getFitness() << "\n";
 
@@ -22,6 +31,7 @@ void CGeneticAlgorithm::vRunIteration()
 {
 	crossPopulation();
 	mutatePopulation();
+	evaluateFitnessForAll();
 	//std::cout << getBestSolution()->getFitness() << "\n";
 }
 
@@ -40,7 +50,7 @@ void CGeneticAlgorithm::crossPopulation()
 
 		CIndividual* parent1;
 
-		if (parent1_1->evaluateFitness() > parent1_2->evaluateFitness())
+		if (parent1_1->getFitness() > parent1_2->getFitness())
 			parent1 = parent1_1;
 		else
 			parent1 = parent1_2;
@@ -62,7 +72,7 @@ void CGeneticAlgorithm::crossPopulation()
 			parent2 = parent2_1;
 		else //if not, choose best
 		{
-			if (parent2_1->evaluateFitness() > parent2_2->evaluateFitness())
+			if (parent2_1->getFitness() > parent2_2->getFitness())
 				parent2 = parent2_1;
 			else
 				parent2 = parent2_2;
@@ -93,12 +103,20 @@ void CGeneticAlgorithm::crossPopulation()
 			}
 		}
 
-		newPopulation.push_back(&CIndividual(cEvaluator, v1));
-		newPopulation.push_back(&CIndividual(cEvaluator, v2));
+		newPopulation.push_back(new CIndividual(cEvaluator, v1));
+		newPopulation.push_back(new CIndividual(cEvaluator, v2));
 
 	}
 
 	//set new population
+	for (size_t i = 0; i < population.size(); i++)
+	{
+		if (population.at(i) != best)  // in case to not delete best saved solution
+		{
+			delete population.at(i);
+		}
+		
+	}
 	population.clear();
 	population = newPopulation;
 }
@@ -107,4 +125,10 @@ void CGeneticAlgorithm::mutatePopulation()
 {
 	for (size_t i = 0; i < population.size(); i++)
 		population.at(i)->mutate(mutProb);
+}
+
+void CGeneticAlgorithm::evaluateFitnessForAll()
+{
+	for (size_t i = 0; i < population.size(); i++)
+		population.at(i)->evaluateFitness();
 }

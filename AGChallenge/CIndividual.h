@@ -20,6 +20,10 @@ public:
 
 	CIndividual(CLFLnetEvaluator& cEvaluator, std::vector<int> &solution) : cEvaluator(cEvaluator) , solution(solution), fitEvaluated(false), fitness(0.0) {}
 
+	~CIndividual() {
+		solution.clear();
+	}
+
 	std::vector<int>* getSolution();
 
 	double getFitness();
