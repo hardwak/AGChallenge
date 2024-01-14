@@ -6,15 +6,23 @@ CIndividual* CGeneticAlgorithm::getBestSolution()
 	CIndividual* best = nullptr;
 	for (size_t i = 0; i < popSize; i++)
 	{
-		double currFitness = population.at(i)->getFitness();
+		double currFitness = population.at(i)->evaluateFitness();
 		if (bestFitness < currFitness)
 		{
 			bestFitness = currFitness;
 			best = population.at(i);
 		}
 	}
+	std::cout << best->getFitness() << "\n";
 
     return best;
+}
+
+void CGeneticAlgorithm::vRunIteration()
+{
+	crossPopulation();
+	mutatePopulation();
+	//std::cout << getBestSolution()->getFitness() << "\n";
 }
 
 void CGeneticAlgorithm::crossPopulation()
@@ -28,20 +36,22 @@ void CGeneticAlgorithm::crossPopulation()
 		CIndividual* parent1_1 = population.at(lRand(population.size()));
 		CIndividual* parent1_2 = population.at(lRand(population.size()));
 		while (parent1_1 == parent1_2)
-			parent1_2 = population.at(lRand(population.size())); //zeby nie bylo dwoch takich samych rodzicow
+			parent1_2 = population.at(lRand(population.size())); //no two same parents
 
 		CIndividual* parent1;
 
-		if (parent1_1->getFitness() > parent1_2->getFitness())
+		if (parent1_1->evaluateFitness() > parent1_2->evaluateFitness())
 			parent1 = parent1_1;
 		else
 			parent1 = parent1_2;
 
-		//find 2 parents and choose best,
+
+
+		//find another 2 parents and choose best,
 		CIndividual* parent2_1 = population.at(lRand(population.size()));
 		CIndividual* parent2_2 = population.at(lRand(population.size()));
 		while (parent2_1 == parent2_2)
-			parent2_2 = population.at(lRand(population.size())); //zeby nie bylo dwoch takich samych rodzicow
+			parent2_2 = population.at(lRand(population.size())); //no two same parents
 
 		CIndividual* parent2;
 
@@ -52,20 +62,20 @@ void CGeneticAlgorithm::crossPopulation()
 			parent2 = parent2_1;
 		else //if not, choose best
 		{
-			if (parent2_1->getFitness() > parent2_2->getFitness())
+			if (parent2_1->evaluateFitness() > parent2_2->evaluateFitness())
 				parent2 = parent2_1;
 			else
 				parent2 = parent2_2;
 		}
 
 
-		//losujemy krzyzowanie rand < crossProb i krzyzujemy
+		//draw a crossRand < crossProb and cross
 
 		std::vector<int> v1;
 		std::vector<int> v2;
 
-		//jezeli krzyzowanie zostanie wylosowane, crossPlace otrzyma miejsce do ktorego trzeba krzyzowac,
-		//w innym przypadku i > crossPlace bedzie zawsze dawac false
+		//if a crossover is drawn, crossPlace will receive a number of place to cross,
+		//otherwise i > crossPlace will always return false
 		int crossPlace = parent1->getSolution()->size();
 		if (dRand() < crossProb)
 			crossPlace = lRand(parent1->getSolution()->size() - 1);
@@ -83,11 +93,18 @@ void CGeneticAlgorithm::crossPopulation()
 			}
 		}
 
-
 		newPopulation.push_back(&CIndividual(cEvaluator, v1));
 		newPopulation.push_back(&CIndividual(cEvaluator, v2));
 
 	}
 
-	//
+	//set new population
+	population.clear();
+	population = newPopulation;
+}
+
+void CGeneticAlgorithm::mutatePopulation()
+{
+	for (size_t i = 0; i < population.size(); i++)
+		population.at(i)->mutate(mutProb);
 }

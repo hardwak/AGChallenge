@@ -7,28 +7,26 @@ class CIndividual
 {
 private:
 	std::vector<int> solution;
-	CLFLnetEvaluator cEvaluator;
+	CLFLnetEvaluator &cEvaluator;
 	double fitness;
+	bool fitEvaluated;
 
 	void randomFill(std::vector<int>& solution);
 public:
 
-	CIndividual(CLFLnetEvaluator& cEvaluator) : cEvaluator(cEvaluator){
+	CIndividual(CLFLnetEvaluator& cEvaluator) : cEvaluator(cEvaluator), fitEvaluated(false) , fitness(0.0){
 		randomFill(solution);
-		fitness = cEvaluator.dEvaluate(&solution);
 	}
 
-	CIndividual(CLFLnetEvaluator& cEvaluator, std::vector<int> &solution) : cEvaluator(cEvaluator) , solution(solution){
-		fitness = cEvaluator.dEvaluate(&solution);
-	}
+	CIndividual(CLFLnetEvaluator& cEvaluator, std::vector<int> &solution) : cEvaluator(cEvaluator) , solution(solution), fitEvaluated(false), fitness(0.0) {}
 
-	const std::vector<int>* getSolution();
+	std::vector<int>* getSolution();
 
 	double getFitness();
 
-	int mutate(int number, int n, double mutProb);
+	double evaluateFitness();
 
+	void mutate(double mutProb);
 
-	//cross();
 };
 

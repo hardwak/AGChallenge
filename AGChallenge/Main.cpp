@@ -1,6 +1,7 @@
 #include "Evaluator.h"
 #include "Optimizer.h"
 #include "Timer.h"
+#include "CGeneticAlgorithm.h"
 
 #include <exception>
 #include <iostream>
@@ -12,6 +13,10 @@ using namespace std;
 
 #define dMAX_TIME 20 * 60
 
+int popSize = 200;
+double crossProb = 0.5;
+double mutProb = 0.3;
+
 
 void vRunExperiment(CLFLnetEvaluator &cConfiguredEvaluator)
 {
@@ -21,21 +26,19 @@ void vRunExperiment(CLFLnetEvaluator &cConfiguredEvaluator)
 
 		double d_time_passed;
 
-		COptimizer c_optimizer(cConfiguredEvaluator);
+		CGeneticAlgorithm c_genetic_algorithm(cConfiguredEvaluator, popSize, crossProb, mutProb);
 
 		c_time_counter.vSetStartNow();
 
-		c_optimizer.vInitialize();
-
 		c_time_counter.bGetTimePassed(&d_time_passed);
 
-		while (d_time_passed <= dMAX_TIME)
-		{
-			c_optimizer.vRunIteration();
-			c_optimizer.pvGetCurrentBest();
+		//while (d_time_passed <= dMAX_TIME)
+		//{
+			c_genetic_algorithm.vRunIteration();
+			c_genetic_algorithm.getBestSolution();
 
 			c_time_counter.bGetTimePassed(&d_time_passed);
-		}//while (d_time_passed <= MAX_TIME)
+		//}//while (d_time_passed <= MAX_TIME)
 	}//try
 	catch (exception &c_exception)
 	{
@@ -67,7 +70,7 @@ void main(int iArgCount, char **ppcArgValues)
 	cout << "end\n";
 
 	CString  s_test;
-//	vRunLFLExperiment("104b00");
+	vRunLFLExperiment("104b00");
 
 	/*vRunIsingSpinGlassExperiment(81, 0, i_mask_seed);
 	vRunIsingSpinGlassExperiment(81, 0, iSEED_NO_MASK);

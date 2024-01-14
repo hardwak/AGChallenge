@@ -1,26 +1,35 @@
 #include "CIndividual.h"
 #include "CGeneticAlgorithm.h"
 #include <cstdlib> 
+#include <exception>
 
-const std::vector<int>* CIndividual::getSolution()
+std::vector<int>* CIndividual::getSolution()
 {
 	return &solution;
 }
 
 double CIndividual::getFitness()
 {
+	if (fitEvaluated)
+		return fitness;
+	else
+		throw std::runtime_error("Cannot get fitness before evaluation");
+}
+
+double CIndividual::evaluateFitness()
+{
+	fitness = cEvaluator.dEvaluate(&solution);
+	fitEvaluated = true;
 	return fitness;
 }
 
-int CIndividual::mutate(int number, int n, double mutProb)
+void CIndividual::mutate(double mutProb)
 {
-	if (mutProb )
-	{
-
-	}
-	
-
-	return 0;
+	for (size_t i = 0; i < solution.size(); i++)
+		if (dRand() < mutProb)
+		{
+			solution.at(i) = lRand(cEvaluator.iGetNumberOfValues(i));
+		}
 }
 
 void CIndividual::randomFill(std::vector<int>& solution)
