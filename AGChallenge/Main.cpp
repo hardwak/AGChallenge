@@ -1,5 +1,4 @@
 #include "Evaluator.h"
-#include "Optimizer.h"
 #include "Timer.h"
 #include "CGeneticAlgorithm.h"
 
@@ -73,7 +72,7 @@ void main(int iArgCount, char **ppcArgValues)
 	
 
 	CString  s_test;
-	vRunLFLExperiment("144b01");
+	vRunLFLExperiment("104b00");
 	cout << "end\n";
 
 	/*vRunIsingSpinGlassExperiment(81, 0, i_mask_seed);

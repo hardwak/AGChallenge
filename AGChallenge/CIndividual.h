@@ -24,6 +24,8 @@ public:
 		solution.clear();
 	}
 
+	std::pair<CIndividual*, CIndividual*> cross(CIndividual* parent2, double crossProb);
+
 	std::vector<int>* getSolution();
 
 	double getFitness();

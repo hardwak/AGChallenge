@@ -2,22 +2,19 @@
 
 CIndividual* CGeneticAlgorithm::getBestSolution()
 {
-
 	double bestFitness = best->getFitness();
-	CIndividual* newBest;
-	bool newBestFound = false;
+	CIndividual* newBest = nullptr;
 	for (size_t i = 0; i < popSize; i++)
 	{
 		double currFitness = population.at(i)->getFitness();
 		if (bestFitness < currFitness)
 		{
-			newBestFound = true;
 			bestFitness = currFitness;
 			newBest = population.at(i);
 		}
 	}
 
-	if (newBestFound)
+	if (newBest != nullptr)
 	{
 		delete best;
 		best = newBest;
@@ -41,6 +38,7 @@ void CGeneticAlgorithm::crossPopulation()
 
 	while (newPopulation.size() < popSize)
 	{
+		//-----------------------------STEP 1--------------------------------------
 
 		//find 2 parents and choose best 
 		CIndividual* parent1_1 = population.at(lRand(population.size()));
@@ -56,6 +54,8 @@ void CGeneticAlgorithm::crossPopulation()
 			parent1 = parent1_2;
 
 
+
+		//-----------------------------STEP 2--------------------------------------
 
 		//find another 2 parents and choose best,
 		CIndividual* parent2_1 = population.at(lRand(population.size()));
@@ -79,35 +79,21 @@ void CGeneticAlgorithm::crossPopulation()
 		}
 
 
-		//draw a crossRand < crossProb and cross
 
-		std::vector<int> v1;
-		std::vector<int> v2;
+		//-----------------------------STEP 3--------------------------------------
+		
+		//cross parent1 with parent2
+		std::pair<CIndividual*, CIndividual*> pair(parent1->cross(parent2, crossProb));
 
-		//if a crossover is drawn, crossPlace will receive a number of place to cross,
-		//otherwise i > crossPlace will always return false
-		int crossPlace = parent1->getSolution()->size();
-		if (dRand() < crossProb)
-			crossPlace = lRand(parent1->getSolution()->size() - 1);
-
-		for (size_t i = 0; i < parent1->getSolution()->size(); i++)
-		{
-			if (i > crossPlace) {
-				v1.push_back(parent2->getSolution()->at(i));
-				v2.push_back(parent1->getSolution()->at(i));
-			}
-			else
-			{
-				v1.push_back(parent1->getSolution()->at(i));
-				v2.push_back(parent2->getSolution()->at(i));
-			}
-		}
-
-		newPopulation.push_back(new CIndividual(cEvaluator, v1));
-		newPopulation.push_back(new CIndividual(cEvaluator, v2));
+		newPopulation.push_back(pair.first);
+		newPopulation.push_back(pair.second);
 
 	}
 
+
+
+	//-----------------------------STEP 4--------------------------------------
+	
 	//set new population
 	for (size_t i = 0; i < population.size(); i++)
 	{
